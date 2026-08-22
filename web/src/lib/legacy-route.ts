@@ -73,7 +73,13 @@ export function resolveLegacyRoute(rawHref: string): string | null {
 
   const pathname = normalizeLegacyPath(source.pathname)
   if (pathname === '/login') {
-    return buildTargetHref('/sign-in', source)
+    const client = source.searchParams.get('client') ?? ''
+    const redirectUri = source.searchParams.get('redirect_uri') ?? ''
+    const target =
+      client === 'naviforge-extension' && redirectUri
+        ? '/plugin/connect'
+        : '/sign-in'
+    return buildTargetHref(target, source)
   }
   if (pathname === '/forbidden') {
     return buildTargetHref('/403', source)

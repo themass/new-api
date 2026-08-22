@@ -55,3 +55,8 @@ export function buildPluginCallbackUrl(
   }
   return target.toString()
 }
+
+/** Navigate to chrome-extension:// or other external callback (never use router redirect). */
+export function redirectToExternal(url: string): void {
+  window.location.assign(url)
+}

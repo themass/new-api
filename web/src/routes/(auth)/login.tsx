@@ -14,8 +14,10 @@ const searchSchema = z.object({
 /** Alias for extension docs: /login?redirect_uri=chrome-extension://... */
 export const Route = createFileRoute('/(auth)/login')({
   beforeLoad: ({ search }) => {
+    const hasPlugin =
+      search.client === 'naviforge-extension' && Boolean(search.redirect_uri)
     throw redirect({
-      to: '/sign-in',
+      to: hasPlugin ? '/plugin/connect' : '/sign-in',
       search: {
         redirect: search.redirect,
         redirect_uri: search.redirect_uri,

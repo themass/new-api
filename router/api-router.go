@@ -63,6 +63,7 @@ func SetApiRouter(router *gin.Engine) {
 		apiRouter.POST("/waffo-pancake/webhook/:env", anonymousRequestBodyLimit, controller.WaffoPancakeWebhook)
 
 		pluginRoute := apiRouter.Group("/plugin")
+		pluginRoute.GET("/meta", middleware.DisableCache(), controller.PluginMeta)
 		pluginRoute.Use(middleware.UserAuth())
 		{
 			pluginRoute.GET("/bootstrap", middleware.DisableCache(), controller.PluginBootstrap)

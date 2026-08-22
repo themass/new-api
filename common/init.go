@@ -194,6 +194,7 @@ func initConstantEnv() {
 	constant.GenerateDefaultToken = GetEnvOrDefaultBool("GENERATE_DEFAULT_TOKEN", false)
 	constant.PluginDefaultChatModel = GetEnvOrDefaultString("PLUGIN_DEFAULT_CHAT_MODEL", "gpt-4o")
 	constant.PluginDefaultOcrModel = GetEnvOrDefaultString("PLUGIN_DEFAULT_OCR_MODEL", "gpt-4o-mini")
+	constant.PluginBuildLabel = GetEnvOrDefaultString("PLUGIN_BUILD_LABEL", "")
 	if name := strings.TrimSpace(GetEnvOrDefaultString("PLUGIN_CHAT_PROFILE_NAME", "")); name != "" {
 		constant.PluginDefaultChatProfileName = name
 	}

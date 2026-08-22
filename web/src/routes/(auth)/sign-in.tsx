@@ -20,10 +20,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 import { z } from 'zod'
 
 import { sanitizeAuthRedirect } from '@/features/auth/lib/auth-redirect'
-import {
-  buildPluginCallbackUrl,
-  parsePluginLoginContext,
-} from '@/features/auth/lib/plugin-redirect'
+import { parsePluginLoginContext } from '@/features/auth/lib/plugin-redirect'
 import { SignIn } from '@/features/auth/sign-in'
 import { useAuthStore } from '@/stores/auth-store'
 
@@ -38,20 +35,20 @@ export const Route = createFileRoute('/(auth)/sign-in')({
   component: SignIn,
   validateSearch: searchSchema,
   beforeLoad: async ({ search }) => {
-    const { auth } = useAuthStore.getState()
     const pluginCtx = parsePluginLoginContext(search)
-
-    if (auth.user && auth.accessToken && pluginCtx) {
-      const callback = buildPluginCallbackUrl(
-        pluginCtx,
-        auth.accessToken,
-        undefined,
-        auth.accessExpiresAt ?? undefined
-      )
-      throw redirect({ href: callback, replace: true })
+    if (pluginCtx) {
+      throw redirect({
+        to: '/plugin/connect',
+        search: {
+          redirect_uri: pluginCtx.redirectUri,
+          client: pluginCtx.client,
+          state: pluginCtx.state,
+        },
+        replace: true,
+      })
     }
 
-    // 如果已经有用户信息，说明已登录
+    const { auth } = useAuthStore.getState()
     if (auth.user) {
       const target =
         sanitizeAuthRedirect(search?.redirect, window.location.origin) ??
