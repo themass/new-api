@@ -20,6 +20,7 @@ export function PluginConnectPage() {
   const { t } = useTranslation()
   const search = useSearch({ from: '/plugin/connect' })
   const pluginCtx = parsePluginLoginContext(search)
+  const hasPluginParams = Boolean(search.client || search.redirect_uri || search.extension_id)
   const auth = useAuthStore((state) => state.auth)
   const [meta, setMeta] = useState<PluginMeta | null>(null)
   const [busy, setBusy] = useState(false)
@@ -80,9 +81,17 @@ export function PluginConnectPage() {
 
         {!pluginCtx ? (
           <div className='rounded-2xl border border-amber-200 bg-amber-50 p-6 text-amber-950'>
-            <p className='font-medium'>{t('Invalid extension authorization link')}</p>
+            <p className='font-medium'>
+              {hasPluginParams
+                ? t('Invalid extension callback URL')
+                : t('Invalid extension authorization link')}
+            </p>
             <p className='mt-2 text-sm'>
-              {t('Open this page from the NaviForge extension, or visit the docs below.')}
+              {hasPluginParams
+                ? t(
+                    'The redirect_uri is missing or invalid (chrome-extension://invalid is blocked). Open login from the NaviForge extension sidebar or Account page.'
+                  )
+                : t('Open this page from the NaviForge extension, or visit the docs below.')}
             </p>
             <Button asChild className='mt-4' variant='outline'>
               <Link to='/plugin/docs'>{t('View plugin API docs')}</Link>

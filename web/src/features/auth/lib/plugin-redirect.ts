@@ -16,12 +16,7 @@ export type PluginLoginContext = {
 const PLUGIN_CLIENT = 'naviforge-extension'
 
 export function parsePluginLoginContext(search: Record<string, unknown>): PluginLoginContext | null {
-  const redirectUri =
-    typeof search.redirect_uri === 'string'
-      ? search.redirect_uri.trim()
-      : typeof search.redirectUri === 'string'
-        ? search.redirectUri.trim()
-        : ''
+  const redirectUri = resolvePluginRedirectUri(search)
   const client =
     typeof search.client === 'string' ? search.client.trim() : ''
   if (!redirectUri || client !== PLUGIN_CLIENT) return null
@@ -30,10 +25,37 @@ export function parsePluginLoginContext(search: Record<string, unknown>): Plugin
   return { redirectUri, client, state }
 }
 
+/** Prefer explicit redirect_uri; fallback to extension_id (shorter URL for launchWebAuthFlow). */
+export function resolvePluginRedirectUri(search: Record<string, unknown>): string {
+  const explicit =
+    typeof search.redirect_uri === 'string'
+      ? search.redirect_uri.trim()
+      : typeof search.redirectUri === 'string'
+        ? search.redirectUri.trim()
+        : ''
+  if (explicit) return explicit
+  const extensionId =
+    typeof search.extension_id === 'string'
+      ? search.extension_id.trim()
+      : typeof search.extensionId === 'string'
+        ? search.extensionId.trim()
+        : ''
+  if (!extensionId || extensionId === 'invalid') return ''
+  return `https://${extensionId}.chromiumapp.org/auth-callback`
+}
+
 export function isAllowedPluginRedirectUri(value: string): boolean {
   try {
     const url = new URL(value)
-    return url.protocol === 'chrome-extension:' && Boolean(url.hostname)
+    if (url.protocol === 'chrome-extension:') {
+      return Boolean(url.hostname) && url.hostname !== 'invalid'
+    }
+    // Chrome identity.launchWebAuthFlow callback (HTTPS → extension, not blocked)
+    if (url.protocol === 'https:' && url.hostname.endsWith('.chromiumapp.org')) {
+      const extId = url.hostname.replace(/\.chromiumapp\.org$/, '')
+      return extId.length > 0 && extId !== 'invalid'
+    }
+    return false
   } catch {
     return false
   }
