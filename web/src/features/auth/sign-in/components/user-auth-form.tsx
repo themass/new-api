@@ -62,6 +62,7 @@ import { useAuthStore } from '@/stores/auth-store'
 export function UserAuthForm({
   className,
   redirectTo,
+  pluginSearch,
   ...props
 }: AuthFormProps) {
   const { t } = useTranslation()
@@ -186,7 +187,7 @@ export function UserAuthForm({
         if (!isAuthBundle(res.data)) {
           throw new Error(t('Login failed'))
         }
-        await handleLoginSuccess(res.data, redirectTo)
+        await handleLoginSuccess(res.data, redirectTo, pluginSearch)
         toast.success(t('Welcome back!'))
       }
     } catch (error: unknown) {
@@ -224,7 +225,7 @@ export function UserAuthForm({
     try {
       const res = await wechatLoginByCode(wechatCode)
       if (res?.success && isAuthBundle(res.data)) {
-        await handleLoginSuccess(res.data, redirectTo)
+        await handleLoginSuccess(res.data, redirectTo, pluginSearch)
         toast.success(t('Signed in via WeChat'))
         handleWeChatDialogChange(false)
       } else {
@@ -295,7 +296,7 @@ export function UserAuthForm({
         throw new Error(t('Missing user data from Passkey login response'))
       }
 
-      await handleLoginSuccess(finish.data, redirectTo)
+      await handleLoginSuccess(finish.data, redirectTo, pluginSearch)
       toast.success(t('Signed in with Passkey'))
     } catch (error: unknown) {
       if (getServerErrorMessageKey(error)) return

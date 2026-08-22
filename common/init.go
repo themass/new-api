@@ -192,6 +192,14 @@ func initConstantEnv() {
 	constant.NotificationLimitDurationMinute = GetEnvOrDefault("NOTIFICATION_LIMIT_DURATION_MINUTE", 10)
 	// GenerateDefaultToken 是否生成初始令牌，默认关闭。
 	constant.GenerateDefaultToken = GetEnvOrDefaultBool("GENERATE_DEFAULT_TOKEN", false)
+	constant.PluginDefaultChatModel = GetEnvOrDefaultString("PLUGIN_DEFAULT_CHAT_MODEL", "gpt-4o")
+	constant.PluginDefaultOcrModel = GetEnvOrDefaultString("PLUGIN_DEFAULT_OCR_MODEL", "gpt-4o-mini")
+	if name := strings.TrimSpace(GetEnvOrDefaultString("PLUGIN_CHAT_PROFILE_NAME", "")); name != "" {
+		constant.PluginDefaultChatProfileName = name
+	}
+	if name := strings.TrimSpace(GetEnvOrDefaultString("PLUGIN_OCR_PROFILE_NAME", "")); name != "" {
+		constant.PluginDefaultOcrProfileName = name
+	}
 	// 是否启用错误日志
 	constant.ErrorLogEnabled = GetEnvOrDefaultBool("ERROR_LOG_ENABLED", false)
 	// 任务轮询时查询的最大数量

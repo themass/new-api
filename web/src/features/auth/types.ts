@@ -211,4 +211,5 @@ export interface CustomOAuthProviderInfo {
 
 export interface AuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
   redirectTo?: string
+  pluginSearch?: Record<string, unknown>
 }

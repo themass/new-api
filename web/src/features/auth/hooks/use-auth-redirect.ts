@@ -23,6 +23,10 @@ import {
   getSavedLanguage,
   sanitizeAuthRedirect,
 } from '@/features/auth/lib/auth-redirect'
+import {
+  buildPluginCallbackUrl,
+  parsePluginLoginContext,
+} from '@/features/auth/lib/plugin-redirect'
 import { applyAuthBundle } from '@/lib/api'
 import type { AuthBundle } from '@/stores/auth-store'
 
@@ -39,8 +43,21 @@ export function useAuthRedirect() {
    */
   const handleLoginSuccess = async (
     bundle: AuthBundle,
-    redirectTo?: string
+    redirectTo?: string,
+    pluginSearch?: Record<string, unknown>
   ) => {
+    const pluginCtx = pluginSearch ? parsePluginLoginContext(pluginSearch) : null
+    if (pluginCtx) {
+      const callback = buildPluginCallbackUrl(
+        pluginCtx,
+        bundle.access_token,
+        undefined,
+        bundle.access_expires_at
+      )
+      window.location.replace(callback)
+      return
+    }
+
     applyAuthBundle(bundle)
     const savedLang = getSavedLanguage(bundle.user)
     if (savedLang && savedLang !== i18n.language) {

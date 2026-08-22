@@ -62,6 +62,12 @@ func SetApiRouter(router *gin.Engine) {
 		// in Pancake's matching webhook slot; handler enforces env match.
 		apiRouter.POST("/waffo-pancake/webhook/:env", anonymousRequestBodyLimit, controller.WaffoPancakeWebhook)
 
+		pluginRoute := apiRouter.Group("/plugin")
+		pluginRoute.Use(middleware.UserAuth())
+		{
+			pluginRoute.GET("/bootstrap", middleware.DisableCache(), controller.PluginBootstrap)
+		}
+
 		// Universal secure verification routes
 		apiRouter.POST("/verify", middleware.UserAuth(), middleware.CriticalRateLimit(), middleware.DisableCache(), controller.UniversalVerify)
 

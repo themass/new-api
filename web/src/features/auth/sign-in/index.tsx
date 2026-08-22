@@ -27,7 +27,8 @@ import { UserAuthForm } from './components/user-auth-form'
 
 export function SignIn() {
   const { t } = useTranslation()
-  const { redirect } = useSearch({ from: '/(auth)/sign-in' })
+  const search = useSearch({ from: '/(auth)/sign-in' })
+  const { redirect, ...pluginSearch } = search
   const { status } = useStatus()
 
   return (
@@ -52,7 +53,7 @@ export function SignIn() {
             )}
         </div>
 
-        <UserAuthForm redirectTo={redirect} />
+        <UserAuthForm redirectTo={redirect} pluginSearch={pluginSearch} />
 
         <TermsFooter
           variant='sign-in'
