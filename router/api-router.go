@@ -67,6 +67,13 @@ func SetApiRouter(router *gin.Engine) {
 		pluginRoute.Use(middleware.UserAuth())
 		{
 			pluginRoute.GET("/bootstrap", middleware.DisableCache(), controller.PluginBootstrap)
+			replayRoute := pluginRoute.Group("/replay")
+			{
+				replayRoute.GET("/sessions", controller.PluginReplayList)
+				replayRoute.POST("/sessions", controller.PluginReplayUpload)
+				replayRoute.GET("/sessions/:id", controller.PluginReplayGet)
+				replayRoute.DELETE("/sessions/:id", controller.PluginReplayDelete)
+			}
 		}
 
 		// Universal secure verification routes

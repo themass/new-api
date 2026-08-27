@@ -36,6 +36,30 @@ func PluginMeta(c *gin.Context) {
 				"auth":        true,
 				"description": "Returns API key, baseURL, and default chat/OCR models for the extension.",
 			},
+			{
+				"method":      "GET",
+				"path":        "/api/plugin/replay/sessions",
+				"auth":        true,
+				"description": "List behavior replay sessions uploaded from NaviForge.",
+			},
+			{
+				"method":      "POST",
+				"path":        "/api/plugin/replay/sessions",
+				"auth":        true,
+				"description": "Upload a behavior replay session (pointer events + optional rrweb DOM).",
+			},
+			{
+				"method":      "GET",
+				"path":        "/api/plugin/replay/sessions/:id",
+				"auth":        true,
+				"description": "Download full replay payload.",
+			},
+			{
+				"method":      "DELETE",
+				"path":        "/api/plugin/replay/sessions/:id",
+				"auth":        true,
+				"description": "Delete a replay session.",
+			},
 		},
 		"defaults": gin.H{
 			"chatModel": constant.PluginDefaultChatModel,
